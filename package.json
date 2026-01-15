@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "terser": "^5.44.1"
+    "terser": "^5.44.1",
+    "typescript": "^5.9.3"
   }
 }

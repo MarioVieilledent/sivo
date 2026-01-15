@@ -4,9 +4,9 @@ const path = require("path");
 const { execSync } = require("child_process");
 
 // Paths
-const jsPath = path.join(__dirname, "main.js");
-const minJsPath = path.join(__dirname, "main.min.js");
-const htmlPath = path.join(__dirname, "index.html");
+const jsPath = path.join(__dirname, "build/main.js");
+const minJsPath = path.join(__dirname, "build/main.min.js");
+const htmlPath = path.join(__dirname, "dist/index.html");
 
 // terser command that can save me if it's too unsafe:
 // `npx terser "${jsPath}" -c -m -o "${minJsPath}"`
@@ -14,6 +14,9 @@ const htmlPath = path.join(__dirname, "index.html");
 // `npx terser "${jsPath}" -c unsafe,unsafe_math,unsafe_arrows,keep_fnames=false -m toplevel,keep_fnames=false --mangle-fnames -o "${minJsPath}"`
 
 try {
+  // Transpile TS into JS
+  execSync(`npx tsc`, { stdio: "inherit" });
+
   // Minify JS with Terser
   execSync(
     `npx terser "${jsPath}" -c unsafe,unsafe_math,unsafe_arrows,keep_fnames=false -m toplevel,keep_fnames=false --mangle-fnames -o "${minJsPath}"`,

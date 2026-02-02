@@ -36,12 +36,12 @@ const camera = {
   x: 0,
   y: 0,
   z: 0,
-  focal: 0.2,
+  focal: 0.9,
   angle: pi / 2,
-  ux: 0,
-  uz: -1,
-  nx: 1,
-  nz: 0,
+  unitX: 0,
+  unitZ: -1,
+  normalX: 1,
+  normalZ: 0,
 };
 const move = {
   forward: false,
@@ -55,7 +55,7 @@ const move = {
 };
 let horizontalSpeed = updateFrequency / 1000;
 let verticalSpeed = updateFrequency / 1000;
-let turningSpeed = (updateFrequency * pi2) / 1000;
+let turningSpeed = (updateFrequency * pi2) / 1000 / 2;
 
 // Game Variables
 let tick = 0;
@@ -78,10 +78,10 @@ function drawTriangle(a: Pixel, b: Pixel, c: Pixel, color: string) {
 
 // 3D Engine Functions
 function plot(px: number, py: number, pz: number) {
-  const ux = camera.ux;
-  const uz = camera.uz;
-  const nx = camera.nx;
-  const nz = camera.nz;
+  const ux = camera.unitX;
+  const uz = camera.unitZ;
+  const nx = camera.normalX;
+  const nz = camera.normalZ;
 
   const dx = px - camera.x;
   const dz = pz - camera.z;
@@ -115,10 +115,10 @@ function drawCube(x: number, y: number, z: number) {
 function computeUnitAndNormal() {
   const cosTheta = cos(camera.angle);
   const sinTheta = sin(camera.angle);
-  camera.ux = cosTheta;
-  camera.uz = -sinTheta;
-  camera.nx = sinTheta;
-  camera.nz = cosTheta;
+  camera.unitX = cosTheta;
+  camera.unitZ = -sinTheta;
+  camera.normalX = sinTheta;
+  camera.normalZ = cosTheta;
 }
 
 function render() {
@@ -164,10 +164,22 @@ function update() {
   tick++;
 
   // Process player movement
-  move.forward ? (camera.z -= horizontalSpeed) : {};
-  move.left ? (camera.x -= horizontalSpeed) : {};
-  move.backward ? (camera.z += horizontalSpeed) : {};
-  move.right ? (camera.x += horizontalSpeed) : {};
+  if (move.forward) {
+    camera.x += camera.unitX * horizontalSpeed;
+    camera.z += camera.unitZ * horizontalSpeed;
+  }
+  if (move.backward) {
+    camera.x -= camera.unitX * horizontalSpeed;
+    camera.z -= camera.unitZ * horizontalSpeed;
+  }
+  if (move.left) {
+    camera.x -= camera.normalX * horizontalSpeed;
+    camera.z -= camera.normalZ * horizontalSpeed;
+  }
+  if (move.right) {
+    camera.x += camera.normalX * horizontalSpeed;
+    camera.z += camera.normalZ * horizontalSpeed;
+  }
   move.up ? (camera.y += horizontalSpeed) : {};
   move.down ? (camera.y -= horizontalSpeed) : {};
   if (move.turnLeft) {
